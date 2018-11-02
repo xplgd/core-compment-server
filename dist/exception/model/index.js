@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0});const ModelException=require("./ModelException");exports.default=ModelException;

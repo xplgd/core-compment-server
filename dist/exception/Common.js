@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.COMMON_EXCEPTION={code:1e5,name:"CommonException",message:"错误"},exports.ARGUMENT_EXCEPTION={code:100001,name:"ArgumentException",message:"<%=s1%>"};

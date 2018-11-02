@@ -1,0 +1,1 @@
+"use strict";Object.defineProperty(exports,"__esModule",{value:!0});const compress=require("koa-compress"),initCompression=e=>{let s=e.compress;return null==s&&(s={filter:e=>/[text|json|javascript]/i.test(e),threshold:2048,flush:require("zlib").Z_SYNC_FLUSH}),compress(s)};exports.initCompression=initCompression;

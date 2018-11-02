@@ -1,0 +1,35 @@
+{
+    "compilerOptions": {
+      "target": "es6",
+      "module": "commonjs",
+      "lib": [
+        "dom",
+        "scripthost",
+        "es2015"
+      ],
+      "removeComments": true,
+      "strict": true,
+      "strictFunctionTypes": false,
+      "strictPropertyInitialization": false,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "noImplicitThis": true,
+      "noUnusedLocals": true,
+      "noImplicitReturns": true,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "typeRoots": [
+        "./node_modules/@types",
+        "./src/typings"
+      ],
+      "moduleResolution": "node",
+      "sourceMap": true,
+      "declaration": true,
+      "noFallthroughCasesInSwitch": true,
+      "stripInternal": true,
+      "pretty": true,
+    },
+    "include": [
+      "./src/**/*"
+    ]
+  }
