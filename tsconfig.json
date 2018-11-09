@@ -27,7 +27,7 @@
       "declaration": true,
       "noFallthroughCasesInSwitch": true,
       "stripInternal": true,
-      "pretty": true,
+      "pretty": true
     },
     "include": [
       "./src/**/*"

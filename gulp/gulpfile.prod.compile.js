@@ -7,8 +7,10 @@ const dist = 'dist';
 
 gulp.task('clean', () => tasks.clean(dist));
 
+gulp.task('cleanTypes', () => tasks.cleanTypes());
+
 gulp.task('compile', () => tasks.compile(dist, debug, false));
 
 gulp.task('default', () => {
-    runSequence('clean', 'compile');
+    runSequence('cleanTypes', 'clean', 'compile');
 });

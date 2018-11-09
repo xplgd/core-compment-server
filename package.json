@@ -1,10 +1,16 @@
 {
   "name": "core-compment-server",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "index.js",
   "repository": "https://github.com/xplgd/core-compment-server.git",
   "author": "ligt <524839917@qq.com>",
   "license": "MIT",
+  "types": "./@types/index.d.ts",
+  "files": [
+    "@types/",
+    "dist/",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "tslint --format verbose \"src/**/*.{ts,tsx}\"",
@@ -55,6 +61,7 @@
     "gulp-typescript": "^3.2.4",
     "gulp-uglify": "^3.0.0",
     "gulp-util": "^3.0.8",
+    "merge2": "^1.2.3",
     "nodemon": "^1.14.12",
     "run-sequence": "^2.2.1",
     "tslint": "^5.9.1",

@@ -56,7 +56,8 @@ jspm_packages/
 # dotenv environment variables file
 .env
 
-
+dist
+@types
 dev
 .DS_Store
 dev_s
