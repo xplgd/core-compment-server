@@ -1,10 +1,10 @@
 {
   "name": "core-compment-server",
-  "version": "0.0.4",
-  "main": "index.js",
+  "version": "0.0.10",
   "repository": "https://github.com/xplgd/core-compment-server.git",
   "author": "ligt <524839917@qq.com>",
   "license": "MIT",
+  "main": "./dist/index.js",
   "types": "./@types/index.d.ts",
   "files": [
     "@types/",
@@ -41,16 +41,6 @@
   },
   "devDependencies": {
     "@types/debug": "^0.0.31",
-    "@types/kcors": "^2.2.3",
-    "@types/koa": "^2.0.46",
-    "@types/koa-bodyparser": "^5.0.1",
-    "@types/koa-compress": "^2.0.8",
-    "@types/koa-logger": "^3.1.1",
-    "@types/koa-morgan": "^1.0.4",
-    "@types/koa-mount": "^3.0.1",
-    "@types/koa-router": "^7.0.31",
-    "@types/lodash": "^4.14.101",
-    "@types/mysql": "^2.15.4",
     "@types/node": "^10.12.2",
     "@types/streaming-json-stringify": "^3.1.0",
     "better-npm-run": "^0.1.0",
@@ -58,7 +48,7 @@
     "gulp": "^3.9.1",
     "gulp-nodemon": "^2.2.1",
     "gulp-sourcemaps": "^2.6.4",
-    "gulp-typescript": "^3.2.4",
+    "gulp-typescript": "^5.0.0-alpha.3",
     "gulp-uglify": "^3.0.0",
     "gulp-util": "^3.0.8",
     "merge2": "^1.2.3",
@@ -69,6 +59,16 @@
     "uglify-es": "^3.3.9"
   },
   "dependencies": {
+    "@types/kcors": "^2.2.3",
+    "@types/koa": "^2.0.46",
+    "@types/koa-bodyparser": "^5.0.1",
+    "@types/koa-compress": "^2.0.8",
+    "@types/koa-logger": "^3.1.1",
+    "@types/koa-morgan": "^1.0.4",
+    "@types/koa-mount": "^3.0.1",
+    "@types/koa-router": "^7.0.33",
+    "@types/lodash": "^4.14.101",
+    "@types/mysql": "^2.15.4",
     "crypto": "^1.0.1",
     "immutable": "^3.8.2",
     "kcors": "^2.2.2",
@@ -87,6 +87,6 @@
     "neo4j-driver": "^1.6.3",
     "rotating-file-stream": "^1.3.7",
     "streaming-json-stringify": "^3.1.0",
-    "typeorm": "^0.2.7"
+    "typeorm": "^0.2.8"
   }
 }

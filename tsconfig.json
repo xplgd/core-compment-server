@@ -4,8 +4,9 @@
       "module": "commonjs",
       "lib": [
         "dom",
-        "scripthost",
-        "es2015"
+        // "scripthost",
+        // "es2015"
+        "es7"
       ],
       "removeComments": true,
       "strict": true,

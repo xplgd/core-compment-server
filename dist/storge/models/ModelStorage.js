@@ -1,1 +1,19 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});class ModelStorage{constructor(){this.entities={},this.modelList=[],this.filterByModule=(e=>this.modelList.find(t=>t.moduleName===e))}}ModelStorage.getInstance=(()=>(ModelStorage.modelStorage||(ModelStorage.modelStorage=new ModelStorage),ModelStorage.modelStorage)),exports.getModelStorage=(()=>ModelStorage.getInstance());
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+class ModelStorage {
+    constructor() {
+        this.entities = {};
+        this.modelList = [];
+        this.filterByModule = (moduleName) => {
+            return this.modelList.find((model) => model.moduleName === moduleName);
+        };
+    }
+}
+ModelStorage.getInstance = () => {
+    if (!ModelStorage.modelStorage)
+        ModelStorage.modelStorage = new ModelStorage();
+    return ModelStorage.modelStorage;
+};
+exports.getModelStorage = () => {
+    return ModelStorage.getInstance();
+};

@@ -1,1 +1,6 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});const MysqlDriver_1=require("../drivers/MysqlDriver");class MysqlModel extends MysqlDriver_1.MysqlDriver{}exports.default=MysqlModel;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const MysqlDriver_1 = require("../drivers/MysqlDriver");
+class MysqlModel extends MysqlDriver_1.MysqlDriver {
+}
+exports.default = MysqlModel;

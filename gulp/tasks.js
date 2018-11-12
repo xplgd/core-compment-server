@@ -30,7 +30,8 @@ const compile = (dist, debug, dev = true) => {
     if (dev) {
         jsStream = result.js.pipe(sourcemaps.write('.', { includeContent: false, sourceRoot: '../src' }));
     } else {
-        jsStream = result.js.pipe(minify());
+        // jsStream = result.js.pipe(minify());
+        jsStream = result.js;
     }
 
     return merge([

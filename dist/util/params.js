@@ -1,1 +1,64 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});const Exception_1=require("../exception/Exception"),typeorm_1=require("typeorm"),param_1=require("../exception/param"),column_1=require("./column");exports.resolveEntityParams=((e,t,r=!1)=>{const o=typeorm_1.getMetadataArgsStorage().filterColumns(t);switch(e.req.method){case"GET":return convertEntity(e.query,o,r);case"POST":default:return convertEntity(e.request.body,o,r)}});const convertEntity=(e,t,r=!1)=>{const o={};if(e&&null!=e)for(const n of t){const t=n.propertyName,a=r||n.options.nullable,u=column_1.ToNodeType(n.options.type);o[t]=convertValue(t,e[t],a,u)}return o};exports.resolveParams=((e,t,r="string",o=!1,n=!0)=>{if(e.params[t])return convertValue(t,e.params[t],o,r,n);switch(e.req.method){case"GET":return convertValue(t,e.query[t],o,r,n);case"POST":default:return convertValue(t,e.request.body[t],o,r,n)}});const convertValue=(e,t,r,o,n=!0)=>{if(void 0===t&&!r)throw new Exception_1.default(param_1.default.PARAM_IS_NEED,e);if(void 0===t&&r)return null;if(typeof t===o||"array"===o&&t instanceof Array)return t;if(n)switch(o){case"number":{const e=Number(t);if(!isNaN(e))return e;break}case"string":if("function"!=typeof t)return JSON.stringify(t)}throw new Exception_1.default(param_1.default.PARAM_TYPE_ERR,e)};
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Exception_1 = require("../exception/Exception");
+const typeorm_1 = require("typeorm");
+const param_1 = require("../exception/param");
+const column_1 = require("./column");
+exports.resolveEntityParams = (ctx, target, ignore = false) => {
+    const columns = typeorm_1.getMetadataArgsStorage().filterColumns(target);
+    const method = ctx.req.method;
+    switch (method) {
+        case 'GET': return convertEntity(ctx.query, columns, ignore);
+        case 'POST': return convertEntity(ctx.request.body, columns, ignore);
+        default: return convertEntity(ctx.request.body, columns, ignore);
+    }
+};
+const convertEntity = (params, columns, ignore = false) => {
+    const object = {};
+    if (params && params != null) {
+        for (const column of columns) {
+            const key = column.propertyName;
+            const nullable = ignore || column.options.nullable;
+            const type = column_1.ToNodeType(column.options.type);
+            object[key] = convertValue(key, params[key], nullable, type);
+        }
+    }
+    return object;
+};
+exports.resolveParams = (ctx, key, type = 'string', nullable = false, convert = true) => {
+    if (ctx.params[key])
+        return convertValue(key, ctx.params[key], nullable, type, convert);
+    const method = ctx.req.method;
+    switch (method) {
+        case 'GET': return convertValue(key, ctx.query[key], nullable, type, convert);
+        case 'POST': {
+            return convertValue(key, ctx.request.body[key], nullable, type, convert);
+        }
+        default: return convertValue(key, ctx.request.body[key], nullable, type, convert);
+    }
+};
+const convertValue = (key, value, nullable, type, convert = true) => {
+    if (typeof value === 'undefined' && !nullable)
+        throw new Exception_1.default(param_1.default.PARAM_IS_NEED, key);
+    if (typeof value === 'undefined' && nullable)
+        return null;
+    if (typeof value === type || (type === 'array' && value instanceof Array))
+        return value;
+    if (convert) {
+        switch (type) {
+            case 'number': {
+                const res = Number(value);
+                if (!isNaN(res))
+                    return res;
+                break;
+            }
+            case 'string': {
+                if (typeof value !== 'function')
+                    return JSON.stringify(value);
+                break;
+            }
+            default: break;
+        }
+    }
+    throw new Exception_1.default(param_1.default.PARAM_TYPE_ERR, key);
+};

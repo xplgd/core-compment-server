@@ -1,1 +1,12 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});const Compress=require("./compress");exports.Compress=Compress;const Cors=require("./cors");exports.Cors=Cors;const Logger=require("./logger");exports.Logger=Logger;const JsonResponse=require("./JsonResponse");exports.JsonResponse=JsonResponse;const CAToken=require("./CAToken");exports.CAToken=CAToken;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Compress = require("./compress");
+exports.Compress = Compress;
+const Cors = require("./cors");
+exports.Cors = Cors;
+const Logger = require("./logger");
+exports.Logger = Logger;
+const JsonResponse = require("./JsonResponse");
+exports.JsonResponse = JsonResponse;
+const CAToken = require("./CAToken");
+exports.CAToken = CAToken;

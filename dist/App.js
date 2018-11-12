@@ -1,1 +1,75 @@
-"use strict";var __awaiter=this&&this.__awaiter||function(e,i,t,o){return new(t||(t=Promise))(function(r,s){function n(e){try{u(o.next(e))}catch(e){s(e)}}function d(e){try{u(o.throw(e))}catch(e){s(e)}}function u(e){e.done?r(e.value):new t(function(i){i(e.value)}).then(n,d)}u((o=o.apply(e,i||[])).next())})};Object.defineProperty(exports,"__esModule",{value:!0});const Koa=require("koa"),debug=require("debug"),path=require("path"),log=require("koa-logger"),middleware_1=require("./middleware"),bodyParserServ=require("koa-bodyparser"),ModuleManager_1=require("./ModuleManager");class App{constructor(e){this.initMiddleWare=(()=>{this.use(middleware_1.Logger.initRequestLog(this.option)),this.use(middleware_1.Compress.initCompression(this.option)),this.use(middleware_1.Cors.initCors(this.option)),this.use(middleware_1.JsonResponse.initJsonResp(this.option)),this.use(bodyParserServ()),"production"!==process.env.NODE_ENV&&this.use(log())}),this.initModule=(()=>__awaiter(this,void 0,void 0,function*(){yield this.moduleMgr.initModule(this)})),this.init=(()=>__awaiter(this,void 0,void 0,function*(){yield this.initMiddleWare(),yield this.initModule()})),this.loadModule=(e=>{this.moduleMgr.loadModule(e)});const i=e.appOption;this.modelOptions=e.modelOptions,this.option={port:i.port||6789,home:path.resolve(process.cwd(),i.home||""),logPath:i.logPath||"logs",proxy:i.proxy||!1,key:i.key||"app"},this.debugLog=debug(`server:${this.option.key}`),this.server=new Koa,this.server.proxy=this.option.proxy,this.server.keys=[this.option.key],this.moduleMgr=new ModuleManager_1.default}start(){return __awaiter(this,void 0,void 0,function*(){yield this.init(),this.server.listen(this.option.port),this.debugLog(`app initializd: Listening on port ${this.option.port}`)})}getOption(){return this.option}getModelOptions(){return this.modelOptions}getKoaApp(){return this.server}use(e){return this.server.use(e)}}exports.default=App;
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const Koa = require("koa");
+const debug = require("debug");
+const path = require("path");
+const log = require("koa-logger");
+const middleware_1 = require("./middleware");
+const bodyParserServ = require("koa-bodyparser");
+const ModuleManager_1 = require("./ModuleManager");
+class App {
+    constructor(config) {
+        this.initMiddleWare = () => {
+            this.use(middleware_1.Logger.initRequestLog(this.option));
+            this.use(middleware_1.Compress.initCompression(this.option));
+            this.use(middleware_1.Cors.initCors(this.option));
+            this.use(middleware_1.JsonResponse.initJsonResp(this.option));
+            this.use(bodyParserServ());
+            if (process.env.NODE_ENV !== 'production') {
+                this.use(log());
+            }
+        };
+        this.initModule = () => __awaiter(this, void 0, void 0, function* () {
+            yield this.moduleMgr.initModule(this);
+        });
+        this.init = () => __awaiter(this, void 0, void 0, function* () {
+            yield this.initMiddleWare();
+            yield this.initModule();
+        });
+        this.loadModule = (module) => {
+            this.moduleMgr.loadModule(module);
+        };
+        const appOption = config.appOption;
+        this.modelOptions = config.modelOptions;
+        this.option = {
+            port: appOption.port || 6789,
+            home: path.resolve(process.cwd(), appOption.home || ''),
+            logPath: appOption.logPath || 'logs',
+            proxy: appOption.proxy || false,
+            key: appOption.key || 'app'
+        };
+        this.debugLog = debug(`server:${this.option.key}`);
+        this.server = new Koa();
+        this.server.proxy = this.option.proxy;
+        this.server.keys = [this.option.key];
+        this.moduleMgr = new ModuleManager_1.default();
+    }
+    start() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.init();
+            this.server.listen(this.option.port);
+            this.debugLog(`app initializd: Listening on port ${this.option.port}`);
+        });
+    }
+    getOption() {
+        return this.option;
+    }
+    getModelOptions() {
+        return this.modelOptions;
+    }
+    getKoaApp() {
+        return this.server;
+    }
+    use(middleware) {
+        return this.server.use(middleware);
+    }
+}
+exports.default = App;

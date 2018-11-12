@@ -1,11 +1,20 @@
 import { IAppOption } from '..';
-import ICrosOption from './ICrosOption';
 import * as cors from 'kcors';
+
+export interface ICrosOption {
+    origin?: string;
+    allowMethods?: string;
+    exposeHeaders?: string;
+    allowHeaders?: string;
+    maxAge?: number;
+    credentials?: boolean;
+    keepHeadersOnError?: boolean;
+}
 
 /**
  * 设置 cors
  */
-const initCors = (option: IAppOption) => {
+export const initCors = (option: IAppOption): any => {
     const cp = null === option.cors || undefined === option.cors ? {} : option.cors;
     const options: any = {};
     options.origin = cp.origin || '*';
@@ -27,9 +36,4 @@ const initCors = (option: IAppOption) => {
     }
 
     return cors(options);
-};
-
-export {
-    ICrosOption,
-    initCors
 };

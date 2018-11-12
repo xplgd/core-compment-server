@@ -1,1 +1,93 @@
-"use strict";var __awaiter=this&&this.__awaiter||function(t,e,s,r){return new(s||(s=Promise))(function(n,o){function a(t){try{u(r.next(t))}catch(t){o(t)}}function i(t){try{u(r.throw(t))}catch(t){o(t)}}function u(t){t.done?n(t.value):new s(function(e){e(t.value)}).then(a,i)}u((r=r.apply(t,e||[])).next())})};Object.defineProperty(exports,"__esModule",{value:!0});const isJSON=require("koa-is-json"),stringify=require("streaming-json-stringify"),util=require("../../util"),logger_1=require("../logger"),initJsonResp=t=>{const e=logger_1.getLogger("error",t.home,t.logPath);return(t,s)=>__awaiter(this,void 0,void 0,function*(){let r=0,n=null;const o=Object.hasOwnProperty.call(t.query,"pretty"),a=Object.hasOwnProperty.call(t.query,"suppress_response_code");try{t.state.start=new Date,yield s(),404!==t.response.status||t.response.body||t.throw(404);const i=(n=t.body)&&"function"==typeof n.pipe&&n._readableState&&n._readableState.objectMode;if(!isJSON(n)&&!i)return;if(i){const e=stringify();return o&&(e.space=2),void(t.body=n.pipe(e))}jsonFormatter(t,r,n,o,2,a)}catch(s){if(t.status="number"==typeof s.status?s.status:500,t.app.emit("error",s,t),r=t.status,n={name:s.name,message:s.message,code:s.code},404!==s.status&&null!=e)try{const n=[];n.push(`[${util.requestIp(t)}]`),n.push(`[${t.method}]`),n.push(`[${t.url}]`),n.push(`[${r}]`),n.push(`${t.request.header["user-agent"]}\n${s.message}\n${s.stack}\n`),e.error(n.join(" "))}catch(t){console.log(t)}t.status=200,jsonFormatter(t,r,n,o,2,a)}})};exports.initJsonResp=initJsonResp;const jsonFormatter=(t,e,s,r,n,o=!1)=>{t.type="application/json",t.state.end=new Date;const a=o?s:{};o||(a.code=e,a.data=s,"production"!==process.env.NODE_ENV&&(a.__dev=!0,a.__ts={s:t.state.start.toUTCString(),e:t.state.end.toUTCString(),ts:t.state.end-t.state.start})),t.body=r?JSON.stringify(a,null,n):JSON.stringify(a)};
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const isJSON = require("koa-is-json");
+const stringify = require("streaming-json-stringify");
+const util = require("../../util");
+const logger_1 = require("../logger");
+const initJsonResp = (option) => {
+    const errorLogger = logger_1.getLogger('error', option.home, option.logPath);
+    return (ctx, next) => __awaiter(this, void 0, void 0, function* () {
+        let statusCode = 0;
+        let userData = null;
+        const spaces = 2;
+        const prettify = Object.hasOwnProperty.call(ctx.query, 'pretty');
+        const suppressResponseCode = Object.hasOwnProperty.call(ctx.query, 'suppress_response_code');
+        try {
+            ctx.state.start = new Date();
+            yield next();
+            if (ctx.response.status === 404 && !ctx.response.body) {
+                ctx.throw(404);
+            }
+            userData = ctx.body;
+            const stream = userData && typeof userData.pipe === 'function' && userData._readableState && userData._readableState.objectMode;
+            const json = isJSON(userData);
+            if (!json && !stream) {
+                return;
+            }
+            if (stream) {
+                const sfy = stringify();
+                if (prettify) {
+                    sfy.space = spaces;
+                }
+                ctx.body = userData.pipe(sfy);
+                return;
+            }
+            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode);
+        }
+        catch (err) {
+            ctx.status = typeof err.status === 'number' ? err.status : 500;
+            ctx.app.emit('error', err, ctx);
+            statusCode = ctx.status;
+            userData = {
+                name: err.name,
+                message: err.message,
+                code: err.code
+            };
+            if (!(err.status === 404)) {
+                if (errorLogger !== null && errorLogger !== undefined) {
+                    try {
+                        const log = [];
+                        log.push(`[${util.requestIp(ctx)}]`);
+                        log.push(`[${ctx.method}]`);
+                        log.push(`[${ctx.url}]`);
+                        log.push(`[${statusCode}]`);
+                        log.push(`${ctx.request.header['user-agent']}\n${err.message}\n${err.stack}\n`);
+                        errorLogger.error(log.join(' '));
+                    }
+                    catch (e) {
+                        console.log(e);
+                    }
+                }
+            }
+            ctx.status = 200;
+            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode);
+        }
+    });
+};
+exports.initJsonResp = initJsonResp;
+const jsonFormatter = (ctx, code, data, prettify, spaces, suppressResponseCode = false) => {
+    ctx.type = 'application/json';
+    ctx.state.end = new Date();
+    const wrappedBody = suppressResponseCode ? data : {};
+    if (!suppressResponseCode) {
+        wrappedBody.code = code;
+        wrappedBody.data = data;
+        if (process.env.NODE_ENV !== 'production') {
+            wrappedBody.__dev = true;
+            wrappedBody.__ts = {
+                s: ctx.state.start.toUTCString(),
+                e: ctx.state.end.toUTCString(),
+                ts: ctx.state.end - ctx.state.start
+            };
+        }
+    }
+    ctx.body = prettify ? JSON.stringify(wrappedBody, null, spaces) : JSON.stringify(wrappedBody);
+};

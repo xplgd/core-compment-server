@@ -1,1 +1,75 @@
-"use strict";var __awaiter=this&&this.__awaiter||function(t,e,a,r){return new(a||(a=Promise))(function(o,i){function s(t){try{u(r.next(t))}catch(t){i(t)}}function n(t){try{u(r.throw(t))}catch(t){i(t)}}function u(t){t.done?o(t.value):new a(function(e){e(t.value)}).then(s,n)}u((r=r.apply(t,e||[])).next())})};Object.defineProperty(exports,"__esModule",{value:!0});const Router=require("koa-router"),debug=require("debug"),ApiMetadataStorage_1=require("./ApiMetadataStorage");class ApiManager{constructor(){this.registHttpApi=((t,e)=>{const a=e instanceof Array?e:[e];for(const e of a){const a=e.rootPath&&""!==e.rootPath?e.rootPath.startsWith("/")?e.rootPath:"/"+e.rootPath:"/";t=module?t.startsWith("/")?t.substring(1):t:"",ApiMetadataStorage_1.getApiMetadataStorage().addApiRouter(t,a,e.api)}}),this.buildHttpApi=((t,e)=>__awaiter(this,void 0,void 0,function*(){const a=ApiMetadataStorage_1.getApiMetadataStorage().findByName(t);if(a){const r=new Router,o=a.prefix,i=a.target,s=Reflect.construct(i,[]),n=new Router({prefix:o});for(const e of ApiMetadataStorage_1.getApiMetadataStorage().filterByTarget(i))this.buildRouter(t,o,n,e,s);r.use(n.routes()).use(n.allowedMethods()),e.use(r.routes()).use(r.allowedMethods())}})),this.buildApiRouter=(t=>{const e=new Router;for(const t of ApiMetadataStorage_1.getApiMetadataStorage().apiRouterList){const a=t.moduleName,r=t.prefix,o=t.target,i=Reflect.construct(o,[]),s=new Router({prefix:r});for(const t of ApiMetadataStorage_1.getApiMetadataStorage().filterByTarget(o))this.buildRouter(a,r,s,t,i);e.use(s.routes()).use(s.allowedMethods())}t.use(e.routes()).use(e.allowedMethods())}),this.buildRouter=((t,e,a,r,o)=>{const i=r.apiPrefix&&""!==r.apiPrefix?r.apiPrefix.startsWith("/")?r.apiPrefix:"/"+r.apiPrefix:"/",s=r.apiName.startsWith("/")?r.apiName.substring(1):r.apiName,n=i.endsWith("/")?i+s:i+"/"+s;switch(debug(`module:${t}`)(`router:[${r.protocol}]${e+n}`),r.protocol){case"GET":return a.get(n,o[r.methodName].bind(o));case"POST":return a.post(n,o[r.methodName].bind(o));case"PUT":return a.put(n,o[r.methodName].bind(o));case"PATCH":return a.patch(n,o[r.methodName].bind(o));case"DELETE":return a.delete(n,o[r.methodName].bind(o));default:return a}})}static getInstance(){return ApiManager.apiManager||(ApiManager.apiManager=new ApiManager),ApiManager.apiManager}}exports.default=ApiManager;
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const Router = require("koa-router");
+const debug = require("debug");
+const ApiMetadataStorage_1 = require("./ApiMetadataStorage");
+class ApiManager {
+    constructor() {
+        this.registHttpApi = (moduleName, httpApi) => {
+            const apiMetas = httpApi instanceof Array ? httpApi : [httpApi];
+            for (const apiMeta of apiMetas) {
+                const apiRootPath = !apiMeta.rootPath || apiMeta.rootPath === '' ? '/' : apiMeta.rootPath.startsWith('/') ? apiMeta.rootPath : '/' + apiMeta.rootPath;
+                moduleName = !module ? '' : moduleName.startsWith('/') ? moduleName.substring(1) : moduleName;
+                ApiMetadataStorage_1.getApiMetadataStorage().addApiRouter(moduleName, apiRootPath, apiMeta.api);
+            }
+        };
+        this.buildHttpApi = (moduleName, app) => __awaiter(this, void 0, void 0, function* () {
+            const item = ApiMetadataStorage_1.getApiMetadataStorage().findByName(moduleName);
+            if (item) {
+                const router = new Router();
+                const prefix = item.prefix;
+                const target = item.target;
+                const object = Reflect.construct(target, []);
+                const route = new Router({ prefix });
+                for (const metadata of ApiMetadataStorage_1.getApiMetadataStorage().filterByTarget(target)) {
+                    this.buildRouter(moduleName, prefix, route, metadata, object);
+                }
+                router.use(route.routes()).use(route.allowedMethods());
+                app.use(router.routes()).use(router.allowedMethods());
+            }
+        });
+        this.buildApiRouter = (app) => {
+            const router = new Router();
+            for (const item of ApiMetadataStorage_1.getApiMetadataStorage().apiRouterList) {
+                const moduleName = item.moduleName;
+                const prefix = item.prefix;
+                const target = item.target;
+                const object = Reflect.construct(target, []);
+                const route = new Router({ prefix });
+                for (const metadata of ApiMetadataStorage_1.getApiMetadataStorage().filterByTarget(target)) {
+                    this.buildRouter(moduleName, prefix, route, metadata, object);
+                }
+                router.use(route.routes()).use(route.allowedMethods());
+            }
+            app.use(router.routes()).use(router.allowedMethods());
+        };
+        this.buildRouter = (moduleName, prefix, router, metadata, object) => {
+            const apiPrefix = !metadata.apiPrefix || metadata.apiPrefix === '' ? '/' : metadata.apiPrefix.startsWith('/') ? metadata.apiPrefix : '/' + metadata.apiPrefix;
+            const apiName = metadata.apiName.startsWith('/') ? metadata.apiName.substring(1) : metadata.apiName;
+            const apiPath = apiPrefix.endsWith('/') ? apiPrefix + apiName : apiPrefix + '/' + apiName;
+            debug(`module:${moduleName}`)(`router:[${metadata.protocol}]${prefix + apiPath}`);
+            switch (metadata.protocol) {
+                case 'GET': return router.get(apiPath, object[metadata.methodName].bind(object));
+                case 'POST': return router.post(apiPath, object[metadata.methodName].bind(object));
+                case 'PUT': return router.put(apiPath, object[metadata.methodName].bind(object));
+                case 'PATCH': return router.patch(apiPath, object[metadata.methodName].bind(object));
+                case 'DELETE': return router.delete(apiPath, object[metadata.methodName].bind(object));
+                default: return router;
+            }
+        };
+    }
+    static getInstance() {
+        if (!ApiManager.apiManager)
+            ApiManager.apiManager = new ApiManager();
+        return ApiManager.apiManager;
+    }
+}
+exports.default = ApiManager;

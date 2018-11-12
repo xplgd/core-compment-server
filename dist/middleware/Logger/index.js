@@ -1,1 +1,26 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});const path=require("path"),Log=require("log"),fs=require("fs"),rfs=require("rotating-file-stream"),morgan=require("koa-morgan"),getLogger=(e,r,t,o="1d")=>{const s=path.resolve(r,t),g=rfs(e+".log",{interval:o,path:s});return new Log(e,g)};exports.getLogger=getLogger;const initRequestLog=e=>{const r=path.resolve(e.home,e.logPath);fs.existsSync(r)||fs.mkdirSync(r);const t=rfs("request.log",{interval:"1d",path:r});return morgan("combined",{stream:t})};exports.initRequestLog=initRequestLog;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const path = require("path");
+const Log = require("log");
+const fs = require("fs");
+const rfs = require("rotating-file-stream");
+const morgan = require("koa-morgan");
+exports.getLogger = (name, home, logPath, interval = '1d') => {
+    const logRoot = path.resolve(home, logPath);
+    const logStream = rfs(name + '.log', {
+        interval,
+        path: logRoot
+    });
+    return new Log(name, logStream);
+};
+exports.initRequestLog = (option) => {
+    const logRoot = path.resolve(option.home, option.logPath);
+    if (!fs.existsSync(logRoot)) {
+        fs.mkdirSync(logRoot);
+    }
+    const requestLogStream = rfs('request.log', {
+        interval: '1d',
+        path: logRoot
+    });
+    return morgan('combined', { stream: requestLogStream });
+};

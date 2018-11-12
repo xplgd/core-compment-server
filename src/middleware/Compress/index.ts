@@ -1,11 +1,19 @@
 import { IAppOption } from '..';
 import * as compress from 'koa-compress';
-import ICompressionOption from './ICompressionOption';
+
+/**
+ * Gzip 压缩配置
+ */
+export interface ICompressionOption {
+    filter(contentType: string): boolean;
+    threshold: number;
+    flush: any;
+}
 
 /**
  * 内容压缩中间件
  */
-const initCompression = (option: IAppOption) => {
+export const initCompression = (option: IAppOption): any => {
     let compression: ICompressionOption = option.compress as ICompressionOption;
     if (null === compression || undefined === compression) {
         compression = {
@@ -16,9 +24,4 @@ const initCompression = (option: IAppOption) => {
     }
 
     return compress(compression);
-};
-
-export {
-    ICompressionOption,
-    initCompression
 };

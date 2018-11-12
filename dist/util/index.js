@@ -1,1 +1,48 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});const crypto=require("crypto");exports.requestIp=(e=>0===e.ips.length?e.request.ip:e.ips[0]),exports.md5=(e=>{const r=crypto.createHash("md5");return r.update(e),r.digest("hex")}),exports.formatter={toWebSafeBase64:e=>{let r=(e=(e=e.replace(/\+/gi,"-")).replace(/\//gi,"_")).substr(e.length-1);for(;"="===r;)r=(e=e.substr(0,e.length-1)).substr(e.length-1);return e},fromWebSafeBase64:e=>{let r=0;switch((e=(e=e.replace(/-/gi,"+")).replace(/_/gi,"/")).length%4){case 3:r=1;break;case 2:r=2;break;case 0:r=0;break;default:throw new Error("invalid web safe base64 format")}for(let t=0;t<r;t++)e+="=";return e}},exports.validator={stringIsNullOrEmpty:e=>null==e||0===e.length};
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const crypto = require("crypto");
+exports.requestIp = (ctx) => ctx.ips.length === 0 ? ctx.request.ip : ctx.ips[0];
+exports.md5 = (plain) => {
+    const md5Fn = crypto.createHash('md5');
+    md5Fn.update(plain);
+    return md5Fn.digest('hex');
+};
+exports.formatter = {
+    toWebSafeBase64: (base64Str) => {
+        base64Str = base64Str.replace(/\+/ig, '-');
+        base64Str = base64Str.replace(/\//ig, '_');
+        let last = base64Str.substr(base64Str.length - 1);
+        while (last === '=') {
+            base64Str = base64Str.substr(0, base64Str.length - 1);
+            last = base64Str.substr(base64Str.length - 1);
+        }
+        return base64Str;
+    },
+    fromWebSafeBase64: (base64Str) => {
+        base64Str = base64Str.replace(/-/ig, '+');
+        base64Str = base64Str.replace(/_/ig, '/');
+        let missingPaddingCharacters = 0;
+        switch (base64Str.length % 4) {
+            case 3:
+                missingPaddingCharacters = 1;
+                break;
+            case 2:
+                missingPaddingCharacters = 2;
+                break;
+            case 0:
+                missingPaddingCharacters = 0;
+                break;
+            default:
+                throw new Error('invalid web safe base64 format');
+        }
+        for (let i = 0; i < missingPaddingCharacters; i++) {
+            base64Str = base64Str + '=';
+        }
+        return base64Str;
+    }
+};
+exports.validator = {
+    stringIsNullOrEmpty: (str) => {
+        return (null === str || undefined === str || 0 === str.length);
+    }
+};

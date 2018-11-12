@@ -1,1 +1,13 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});const Api_1=require("./Api"),Meta_1=require("./Meta"),name="demo";exports.default={name:name,httpApi:{rootPath:"/api/v1",api:Api_1.default},entities:[Meta_1.default],init:()=>{console.log(123)}};
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Api_1 = require("./Api");
+const Meta_1 = require("./Meta");
+const name = 'demo';
+exports.default = {
+    name,
+    httpApi: { rootPath: '/api/v1', api: Api_1.default },
+    entities: [Meta_1.default],
+    init: () => {
+        console.log(123);
+    }
+};

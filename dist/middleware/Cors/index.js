@@ -1,1 +1,25 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});const cors=require("kcors"),initCors=e=>{const r=null===e.cors||void 0===e.cors?{}:e.cors,o={};return o.origin=r.origin||"*",o.allowMethods=r.allowMethods||"GET,HEAD,PUT,POST,DELETE,PATCH",void 0!==r.exposeHeaders&&(o.exposeHeaders=r.exposeHeaders),void 0!==r.allowHeaders&&(o.exposeHeaders=r.allowHeaders),void 0!==r.maxAge&&(o.maxAge=r.maxAge),r.credentials&&(o.credentials=!0),void 0!==r.keepHeadersOnError&&(o.keepHeadersOnError=r.keepHeadersOnError),cors(o)};exports.initCors=initCors;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const cors = require("kcors");
+exports.initCors = (option) => {
+    const cp = null === option.cors || undefined === option.cors ? {} : option.cors;
+    const options = {};
+    options.origin = cp.origin || '*';
+    options.allowMethods = cp.allowMethods || 'GET,HEAD,PUT,POST,DELETE,PATCH';
+    if (undefined !== cp.exposeHeaders) {
+        options.exposeHeaders = cp.exposeHeaders;
+    }
+    if (undefined !== cp.allowHeaders) {
+        options.exposeHeaders = cp.allowHeaders;
+    }
+    if (undefined !== cp.maxAge) {
+        options.maxAge = cp.maxAge;
+    }
+    if (cp.credentials) {
+        options.credentials = true;
+    }
+    if (undefined !== cp.keepHeadersOnError) {
+        options.keepHeadersOnError = cp.keepHeadersOnError;
+    }
+    return cors(options);
+};

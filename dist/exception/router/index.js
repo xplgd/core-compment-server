@@ -1,1 +1,4 @@
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0});const RouterException=require("./RouterException");exports.default=RouterException;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const RouterException = require("./RouterException");
+exports.default = RouterException;

@@ -1,4 +1,4 @@
-import { Connection, ObjectType, EntitySchema, ObjectLiteral, DeepPartial } from 'typeorm';
+import { Connection, ObjectType, EntitySchema, ObjectLiteral, DeepPartial, UpdateResult, DeleteResult } from 'typeorm';
 
 export default abstract class BaseModel<Entity extends ObjectLiteral> {
     protected conn: Connection;
@@ -21,13 +21,13 @@ export default abstract class BaseModel<Entity extends ObjectLiteral> {
     }
 
     // 标准删除(打删除标记)
-    public async delete(id: number) {
+    public async delete(id: number): Promise<UpdateResult> {
         return await this.conn.createQueryBuilder().update(this.target)
             .set({ isDeleted: 1 }).where('id=:id', { id }).execute();
     }
 
     // 标准删除(彻底删除)
-    public async remove(id: number) {
+    public async remove(id: number): Promise<DeleteResult> {
         return await this.conn.createQueryBuilder().delete().from(this.target)
             .where('id=:id', { id }).execute();
     }

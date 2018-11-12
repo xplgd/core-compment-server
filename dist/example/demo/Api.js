@@ -1,1 +1,42 @@
-"use strict";var __decorate=this&&this.__decorate||function(e,t,r,a){var o,i=arguments.length,n=i<3?t:null===a?a=Object.getOwnPropertyDescriptor(t,r):a;if("object"==typeof Reflect&&"function"==typeof Reflect.decorate)n=Reflect.decorate(e,t,r,a);else for(var c=e.length-1;c>=0;c--)(o=e[c])&&(n=(i<3?o(n):i>3?o(t,r,n):o(t,r))||n);return i>3&&n&&Object.defineProperty(t,r,n),n},__metadata=this&&this.__metadata||function(e,t){if("object"==typeof Reflect&&"function"==typeof Reflect.metadata)return Reflect.metadata(e,t)},__awaiter=this&&this.__awaiter||function(e,t,r,a){return new(r||(r=Promise))(function(o,i){function n(e){try{u(a.next(e))}catch(e){i(e)}}function c(e){try{u(a.throw(e))}catch(e){i(e)}}function u(e){e.done?o(e.value):new r(function(t){t(e.value)}).then(n,c)}u((a=a.apply(e,t||[])).next())})};Object.defineProperty(exports,"__esModule",{value:!0});const Service_1=require("./Service"),__1=require("../../"),Router=require("koa-router"),Meta_1=require("./Meta");class DemoApi{constructor(){this.demoService=new Service_1.default}create(e){return __awaiter(this,void 0,void 0,function*(){const t=__1.resolveEntityParams(e,Meta_1.default),r=yield this.demoService.create(t);e.body={result:r}})}}__decorate([__1.ApiGetway("POST",{}),__metadata("design:type",Function),__metadata("design:paramtypes",[Object]),__metadata("design:returntype",Promise)],DemoApi.prototype,"create",null),exports.default=DemoApi;
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const Service_1 = require("./Service");
+const __1 = require("../../");
+const Router = require("koa-router");
+const Meta_1 = require("./Meta");
+class DemoApi {
+    constructor() {
+        this.demoService = new Service_1.default();
+    }
+    create(ctx) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const info = __1.resolveEntityParams(ctx, Meta_1.default);
+            const result = yield this.demoService.create(info);
+            ctx.body = { result };
+        });
+    }
+}
+__decorate([
+    __1.ApiGetway('POST', {}),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], DemoApi.prototype, "create", null);
+exports.default = DemoApi;

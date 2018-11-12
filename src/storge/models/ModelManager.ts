@@ -78,7 +78,7 @@ export default class ModelManager {
         }
     }
 
-    public getConnect = (name?: string) => {
+    public getConnect = (name?: string): any => {
         const model = this.models[name || 'base'];
         if (!model) throw new Exception();
         const conn = model.getConnect();
@@ -87,7 +87,7 @@ export default class ModelManager {
         return conn;
     }
 
-    public getModel = (name?: string) => {
+    public getModel = (name?: string): MssqlModel | MysqlModel | Neo4jModel => {
         const model = this.models[name || 'base'];
         if (!model) throw new Exception();
 

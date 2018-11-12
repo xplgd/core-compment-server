@@ -7,7 +7,7 @@ import * as bodyParserServ from 'koa-bodyparser';
 import ModuleManager from './ModuleManager';
 import { IModelOption } from './storge/models/IModelOption';
 
-class App {
+export default class App {
 
     private server: Koa;
     private option: IAppOption;
@@ -109,5 +109,3 @@ class App {
     }
 
 }
-
-export default App;

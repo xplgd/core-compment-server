@@ -1,1 +1,19 @@
-"use strict";var __awaiter=this&&this.__awaiter||function(t,e,n,i){return new(n||(n=Promise))(function(o,r){function a(t){try{c(i.next(t))}catch(t){r(t)}}function u(t){try{c(i.throw(t))}catch(t){r(t)}}function c(t){t.done?o(t.value):new n(function(e){e(t.value)}).then(a,u)}c((i=i.apply(t,e||[])).next())})};Object.defineProperty(exports,"__esModule",{value:!0});const __1=require("../"),config_1=require("./config"),demo_1=require("./demo"),start=()=>__awaiter(this,void 0,void 0,function*(){const t=new __1.App(config_1.default);yield t.loadModule(demo_1.default),t.start()});start();
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const __1 = require("../");
+const config_1 = require("./config");
+const demo_1 = require("./demo");
+const start = () => __awaiter(this, void 0, void 0, function* () {
+    const app = new __1.App(config_1.default);
+    yield app.loadModule(demo_1.default);
+    app.start();
+});
+start();
