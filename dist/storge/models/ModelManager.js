@@ -52,10 +52,7 @@ class ModelManager {
         this.createModel = (option) => __awaiter(this, void 0, void 0, function* () {
             option.type = option.type ? option.type.toLowerCase() : option.type;
             switch (option.type) {
-                case 'mysql': {
-                    const conn = yield typeorm_1.createConnection(option);
-                    return new MysqlModel_1.default(conn);
-                }
+                case 'mysql': return new MysqlModel_1.default(yield typeorm_1.createConnection(option));
                 case 'mssql': return new MssqlModel_1.default(yield typeorm_1.createConnection(option));
                 case 'neo4j': return new Neo4jModel_1.Neo4jModel(yield Neo4jDriver_1.createNeoDriver(option));
                 default: throw new Exception_1.default(model_1.default.MODEL_TYPE_NOT_SUPPORT);
@@ -85,10 +82,10 @@ class ModelManager {
 }
 exports.default = ModelManager;
 exports.getConnect = (name) => {
-    return ModelManager.getInstance().getConnect();
+    return ModelManager.getInstance().getConnect(name);
 };
 exports.getModel = (name) => {
-    return ModelManager.getInstance().getModel();
+    return ModelManager.getInstance().getModel(name);
 };
 exports.createModel = (option) => __awaiter(this, void 0, void 0, function* () {
     return yield ModelManager.getInstance().createModel(option);

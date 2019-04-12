@@ -32,6 +32,12 @@ class DemoApi {
             ctx.body = { result };
         });
     }
+    count(ctx) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.demoService.countQCTask();
+            ctx.body = { result };
+        });
+    }
 }
 __decorate([
     __1.ApiGetway('POST', {}),
@@ -39,4 +45,10 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], DemoApi.prototype, "create", null);
+__decorate([
+    __1.ApiGetway('GET', {}),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], DemoApi.prototype, "count", null);
 exports.default = DemoApi;

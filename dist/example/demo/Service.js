@@ -11,6 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Model_1 = require("./Model");
 const __1 = require("../..");
 const DemoException = require("./Exception");
+const Model2_1 = require("./Model2");
 class DemoService {
     constructor() {
         this.create = (info) => __awaiter(this, void 0, void 0, function* () {
@@ -25,7 +26,11 @@ class DemoService {
                 throw new __1.Exception(DemoException.NAME_IS_ALREADY_EXIST);
             }
         });
+        this.countQCTask = () => __awaiter(this, void 0, void 0, function* () {
+            return yield this.model2.countQCTask();
+        });
         this.model = new Model_1.default();
+        this.model2 = new Model2_1.default();
     }
 }
 exports.default = DemoService;

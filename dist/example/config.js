@@ -21,6 +21,16 @@ const config = {
             synchronize: true
         },
         {
+            name: 'qc',
+            type: 'mysql',
+            host: '10.5.10.18',
+            port: 3306,
+            username: 'root',
+            password: '95938',
+            database: 'qc',
+            timezone: '+08: 00'
+        },
+        {
             name: 'neo',
             type: 'neo4j',
             host: '10.5.11.18',
