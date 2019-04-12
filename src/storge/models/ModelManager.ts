@@ -67,11 +67,7 @@ export default class ModelManager {
         // typeorm中type类型是大小区分的
         option.type = option.type ? option.type.toLowerCase() : option.type;
         switch (option.type) {
-            case 'mysql': {
-                const conn = await createConnection(option as ConnectionOptions);
-
-                return new MysqlModel(conn);
-            }
+            case 'mysql': return new MysqlModel(await createConnection(option as ConnectionOptions));
             case 'mssql': return new MssqlModel(await createConnection(option as ConnectionOptions));
             case 'neo4j': return new Neo4jModel(await createNeoDriver(option));
             default: throw new Exception(ModelException.MODEL_TYPE_NOT_SUPPORT);
@@ -96,11 +92,11 @@ export default class ModelManager {
 }
 
 export const getConnect = (name?: string) => {
-    return ModelManager.getInstance().getConnect();
+    return ModelManager.getInstance().getConnect(name);
 };
 
 export const getModel = (name?: string) => {
-    return ModelManager.getInstance().getModel();
+    return ModelManager.getInstance().getModel(name);
 };
 
 export const createModel = async (option: IModelOption) => {
