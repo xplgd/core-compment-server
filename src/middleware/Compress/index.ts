@@ -4,7 +4,7 @@ import * as compress from 'koa-compress';
 /**
  * Gzip 压缩配置
  */
-export interface ICompressionOption {
+interface ICompressionOption {
     filter(contentType: string): boolean;
     threshold: number;
     flush: any;
@@ -13,7 +13,7 @@ export interface ICompressionOption {
 /**
  * 内容压缩中间件
  */
-export const initCompression = (option: IAppOption): any => {
+const initCompression = (option: IAppOption): any => {
     let compression: ICompressionOption = option.compress as ICompressionOption;
     if (null === compression || undefined === compression) {
         compression = {
@@ -24,4 +24,9 @@ export const initCompression = (option: IAppOption): any => {
     }
 
     return compress(compression);
+};
+
+export {
+    ICompressionOption,
+    initCompression
 };

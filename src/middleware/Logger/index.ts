@@ -12,7 +12,7 @@ import { IAppOption } from '..';
  * @param logPath Log文件存放的路径（文件夹）
  * @param interval 时间周期
  */
-export const getLogger = (name: string, home: string, logPath: string, interval = '1d') => {
+const getLogger = (name: string, home: string, logPath: string, interval = '1d') => {
     const logRoot = path.resolve(home, logPath);
 
     const logStream = rfs(name + '.log', {
@@ -27,7 +27,7 @@ export const getLogger = (name: string, home: string, logPath: string, interval 
  * 访问日志中间件
  * 如果不是生产模式，则在控制台输出访问日志
  */
-export const initRequestLog = (option: IAppOption): any => {
+const initRequestLog = (option: IAppOption): any => {
     const logRoot = path.resolve(option.home, option.logPath);
 
     if (!fs.existsSync(logRoot)) {
@@ -40,4 +40,9 @@ export const initRequestLog = (option: IAppOption): any => {
     });
 
     return morgan('combined', { stream: requestLogStream });
+};
+
+export {
+    getLogger,
+    initRequestLog
 };

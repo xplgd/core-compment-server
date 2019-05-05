@@ -1,7 +1,7 @@
 import { IAppOption } from '..';
 import * as cors from 'kcors';
 
-export interface ICrosOption {
+interface ICrosOption {
     origin?: string;
     allowMethods?: string;
     exposeHeaders?: string;
@@ -14,7 +14,7 @@ export interface ICrosOption {
 /**
  * 设置 cors
  */
-export const initCors = (option: IAppOption): any => {
+const initCors = (option: IAppOption): any => {
     const cp = null === option.cors || undefined === option.cors ? {} : option.cors;
     const options: any = {};
     options.origin = cp.origin || '*';
@@ -36,4 +36,9 @@ export const initCors = (option: IAppOption): any => {
     }
 
     return cors(options);
+};
+
+export  {
+    ICrosOption,
+    initCors
 };

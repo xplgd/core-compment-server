@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const cors = require("kcors");
-exports.initCors = (option) => {
+const initCors = (option) => {
     const cp = null === option.cors || undefined === option.cors ? {} : option.cors;
     const options = {};
     options.origin = cp.origin || '*';
@@ -23,3 +23,4 @@ exports.initCors = (option) => {
     }
     return cors(options);
 };
+exports.initCors = initCors;
