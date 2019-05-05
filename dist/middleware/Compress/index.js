@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const compress = require("koa-compress");
-const initCompression = (option) => {
+exports.initCompression = (option) => {
     let compression = option.compress;
     if (null === compression || undefined === compression) {
         compression = {
@@ -12,4 +12,3 @@ const initCompression = (option) => {
     }
     return compress(compression);
 };
-exports.initCompression = initCompression;

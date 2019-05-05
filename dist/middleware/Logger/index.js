@@ -5,7 +5,7 @@ const Log = require("log");
 const fs = require("fs");
 const rfs = require("rotating-file-stream");
 const morgan = require("koa-morgan");
-const getLogger = (name, home, logPath, interval = '1d') => {
+exports.getLogger = (name, home, logPath, interval = '1d') => {
     const logRoot = path.resolve(home, logPath);
     const logStream = rfs(name + '.log', {
         interval,
@@ -13,8 +13,7 @@ const getLogger = (name, home, logPath, interval = '1d') => {
     });
     return new Log(name, logStream);
 };
-exports.getLogger = getLogger;
-const initRequestLog = (option) => {
+exports.initRequestLog = (option) => {
     const logRoot = path.resolve(option.home, option.logPath);
     if (!fs.existsSync(logRoot)) {
         fs.mkdirSync(logRoot);
@@ -25,4 +24,3 @@ const initRequestLog = (option) => {
     });
     return morgan('combined', { stream: requestLogStream });
 };
-exports.initRequestLog = initRequestLog;

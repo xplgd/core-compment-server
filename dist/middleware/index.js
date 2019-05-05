@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Compress = require("./compress");
+const Compress = require("./Compress");
 exports.Compress = Compress;
-const Cors = require("./cors");
+const Cors = require("./Cors");
 exports.Cors = Cors;
-const Logger = require("./logger");
+const Logger = require("./Logger");
 exports.Logger = Logger;
 const JsonResponse = require("./JsonResponse");
 exports.JsonResponse = JsonResponse;

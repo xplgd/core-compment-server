@@ -1,6 +1,6 @@
-import * as Compress from './compress';
-import * as Cors from './cors';
-import * as Logger from './logger';
+import * as Compress from './Compress';
+import * as Cors from './Cors';
+import * as Logger from './Logger';
 import * as JsonResponse from './JsonResponse';
 import * as CAToken from './CAToken';
 
