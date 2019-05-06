@@ -11,9 +11,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const isJSON = require("koa-is-json");
 const stringify = require("streaming-json-stringify");
 const util = require("../../util");
-const logger_1 = require("../logger");
+const Logger_1 = require("../Logger");
 const initJsonResp = (option) => {
-    const errorLogger = logger_1.getLogger('error', option.home, option.logPath);
+    const errorLogger = Logger_1.getLogger('error', option.home, option.logPath);
     return (ctx, next) => __awaiter(this, void 0, void 0, function* () {
         let statusCode = 0;
         let userData = null;

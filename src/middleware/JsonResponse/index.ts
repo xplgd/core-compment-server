@@ -3,7 +3,7 @@ import * as isJSON from 'koa-is-json';
 import * as stringify from 'streaming-json-stringify';
 import * as util from '../../util';
 import { IAppOption } from '..';
-import { getLogger } from '../logger';
+import { getLogger } from '../Logger';
 
 const initJsonResp = (option: IAppOption) => {
     const errorLogger = getLogger('error', option.home, option.logPath);
