@@ -33,6 +33,7 @@ export default class App {
         this.server.proxy = this.option.proxy;
         this.server.keys = [this.option.key];
         this.moduleMgr = new ModuleManager();
+        this.initMiddleWare();
     }
 
     /**
@@ -58,18 +59,10 @@ export default class App {
     }
 
     /**
-     *  初始化
-     */
-    private init = async () => {
-        await this.initMiddleWare();
-        await this.initModule();
-    }
-
-    /**
      * 启动App
      */
     public async start(): Promise<void> {
-        await this.init();
+        await this.initModule();
         this.server.listen(this.option.port);
         this.debugLog(`app initializd: Listening on port ${this.option.port}`);
     }
@@ -91,6 +84,13 @@ export default class App {
      */
     public getKoaApp(): Koa {
         return this.server;
+    }
+
+    /**
+     * 获取 App 关联使用的 log
+     */
+    public getLogApp = () => {
+        return Logger.getLogger('info', this.option.home, this.option.logPath);
     }
 
     /**

@@ -30,10 +30,9 @@ class App {
         this.initModule = () => __awaiter(this, void 0, void 0, function* () {
             yield this.moduleMgr.initModule(this);
         });
-        this.init = () => __awaiter(this, void 0, void 0, function* () {
-            yield this.initMiddleWare();
-            yield this.initModule();
-        });
+        this.getLogApp = () => {
+            return middleware_1.Logger.getLogger('info', this.option.home, this.option.logPath);
+        };
         this.loadModule = (module) => {
             this.moduleMgr.loadModule(module);
         };
@@ -51,10 +50,11 @@ class App {
         this.server.proxy = this.option.proxy;
         this.server.keys = [this.option.key];
         this.moduleMgr = new ModuleManager_1.default();
+        this.initMiddleWare();
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.init();
+            yield this.initModule();
             this.server.listen(this.option.port);
             this.debugLog(`app initializd: Listening on port ${this.option.port}`);
         });
