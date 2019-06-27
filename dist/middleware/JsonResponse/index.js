@@ -12,7 +12,7 @@ const isJSON = require("koa-is-json");
 const stringify = require("streaming-json-stringify");
 const util = require("../../util");
 const Logger_1 = require("../Logger");
-const initJsonResp = (option) => {
+const initJsonResp = (option, custom = false, myResopnse) => {
     const errorLogger = Logger_1.getLogger('error', option.home, option.logPath);
     return (ctx, next) => __awaiter(this, void 0, void 0, function* () {
         let statusCode = 0;
@@ -40,7 +40,7 @@ const initJsonResp = (option) => {
                 ctx.body = userData.pipe(sfy);
                 return;
             }
-            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode);
+            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode, custom, myResopnse);
         }
         catch (err) {
             ctx.status = typeof err.status === 'number' ? err.status : 500;
@@ -68,18 +68,23 @@ const initJsonResp = (option) => {
                 }
             }
             ctx.status = 200;
-            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode);
+            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode, custom, myResopnse);
         }
     });
 };
 exports.initJsonResp = initJsonResp;
-const jsonFormatter = (ctx, code, data, prettify, spaces, suppressResponseCode = false) => {
+const jsonFormatter = (ctx, code, data, prettify, spaces, suppressResponseCode = false, custom = false, myResopnse) => {
     ctx.type = 'application/json';
     ctx.state.end = new Date();
-    const wrappedBody = suppressResponseCode ? data : {};
+    let wrappedBody = suppressResponseCode ? data : {};
     if (!suppressResponseCode) {
-        wrappedBody.code = code;
-        wrappedBody.data = data;
+        if (custom && myResopnse) {
+            wrappedBody = myResopnse(code, data);
+        }
+        else {
+            wrappedBody.code = code;
+            wrappedBody.data = data;
+        }
         if (process.env.NODE_ENV !== 'production') {
             wrappedBody.__dev = true;
             wrappedBody.__ts = {

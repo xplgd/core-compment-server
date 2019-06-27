@@ -35,7 +35,7 @@ class DemoApi {
     count(ctx) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield this.demoService.countQCTask();
-            ctx.body = { result };
+            ctx.body = result;
         });
     }
 }

@@ -21,7 +21,8 @@ class App {
             this.use(middleware_1.Logger.initRequestLog(this.option));
             this.use(middleware_1.Compress.initCompression(this.option));
             this.use(middleware_1.Cors.initCors(this.option));
-            this.use(middleware_1.JsonResponse.initJsonResp(this.option));
+            if (this.option.customResp)
+                this.use(middleware_1.JsonResponse.initJsonResp(this.option));
             this.use(bodyParserServ());
             if (process.env.NODE_ENV !== 'production') {
                 this.use(log());
@@ -30,9 +31,6 @@ class App {
         this.initModule = () => __awaiter(this, void 0, void 0, function* () {
             yield this.moduleMgr.initModule(this);
         });
-        this.getLogApp = () => {
-            return middleware_1.Logger.getLogger('info', this.option.home, this.option.logPath);
-        };
         this.loadModule = (module) => {
             this.moduleMgr.loadModule(module);
         };
@@ -43,7 +41,8 @@ class App {
             home: path.resolve(process.cwd(), appOption.home || ''),
             logPath: appOption.logPath || 'logs',
             proxy: appOption.proxy || false,
-            key: appOption.key || 'app'
+            key: appOption.key || 'app',
+            customResp: appOption.customResp || false
         };
         this.debugLog = debug(`server:${this.option.key}`);
         this.server = new Koa();
@@ -51,6 +50,7 @@ class App {
         this.server.keys = [this.option.key];
         this.moduleMgr = new ModuleManager_1.default();
         this.initMiddleWare();
+        App.logger = middleware_1.Logger.getLogger('info', this.option.home, this.option.logPath);
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -70,6 +70,9 @@ class App {
     }
     use(middleware) {
         return this.server.use(middleware);
+    }
+    useResponse(response) {
+        return this.server.use(middleware_1.JsonResponse.initJsonResp(this.option, this.option.customResp, response));
     }
 }
 exports.default = App;

@@ -43,6 +43,10 @@ export interface IAppOption {
      * Cross origin 参数
      */
     cors?: Cors.ICrosOption;
+    /**
+     * 是否自定义返回结果结构
+     */
+    customResp?: boolean;
 }
 
 export {

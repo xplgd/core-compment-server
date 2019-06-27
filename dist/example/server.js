@@ -13,6 +13,14 @@ const config_1 = require("./config");
 const demo_1 = require("./demo");
 const start = () => __awaiter(this, void 0, void 0, function* () {
     const app = new __1.App(config_1.default);
+    app.useResponse((code, data) => {
+        if (code === 0) {
+            return { result: true, msg: 'success', data };
+        }
+        else {
+            return { result: false, msg: data.message, data };
+        }
+    });
     yield app.loadModule(demo_1.default);
     app.start();
 });

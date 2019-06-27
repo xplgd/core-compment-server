@@ -20,6 +20,6 @@ export default class DemoApi {
     @ApiGetway('GET', {})
     public async count(ctx: Router.IRouterContext) {
         const result = await this.demoService.countQCTask();
-        ctx.body = { result };
+        ctx.body = result;
     }
 }

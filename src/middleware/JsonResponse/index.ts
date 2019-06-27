@@ -5,7 +5,7 @@ import * as util from '../../util';
 import { IAppOption } from '..';
 import { getLogger } from '../Logger';
 
-const initJsonResp = (option: IAppOption) => {
+const initJsonResp = (option: IAppOption, custom: boolean = false, myResopnse?: (code: number, data: any) => any) => {
     const errorLogger = getLogger('error', option.home, option.logPath);
 
     return async (ctx: Router.IRouterContext, next: () => Promise<any>) => {
@@ -47,7 +47,7 @@ const initJsonResp = (option: IAppOption) => {
                 return;
             }
 
-            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode);
+            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode, custom, myResopnse);
         } catch (err) {
             ctx.status = typeof err.status === 'number' ? err.status : 500;
             // application
@@ -83,22 +83,27 @@ const initJsonResp = (option: IAppOption) => {
 
             // Reset response status
             ctx.status = 200;
-            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode);
+            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode, custom, myResopnse);
         }
     };
 };
 
-const jsonFormatter = (ctx: Router.IRouterContext, code: number, data: any, prettify: boolean, spaces: number, suppressResponseCode: boolean = false) => {
+const jsonFormatter = (ctx: Router.IRouterContext, code: number, data: any, prettify: boolean, spaces: number, suppressResponseCode: boolean = false,
+                       custom: boolean = false, myResopnse?: (code: number, data: any) => any) => {
     // set response type
     ctx.type = 'application/json';
     // 记录处理结束时间
     ctx.state.end = new Date();
 
-    const wrappedBody = suppressResponseCode ? data : {};
+    let wrappedBody = suppressResponseCode ? data : {};
 
     if (!suppressResponseCode) {
-        wrappedBody.code = code;
-        wrappedBody.data = data;
+        if (custom && myResopnse) {
+            wrappedBody = myResopnse(code, data);
+        } else {
+            wrappedBody.code = code;
+            wrappedBody.data = data;
+        }
         if (process.env.NODE_ENV !== 'production') {
             wrappedBody.__dev = true;
             wrappedBody.__ts = {

@@ -14,6 +14,7 @@ export default class App {
     private modelOptions: IModelOption[];
     private debugLog: debug.IDebugger;
     private moduleMgr: ModuleManager;
+    public static logger: any;
 
     /**
      * 构建一个 App 实例
@@ -26,7 +27,8 @@ export default class App {
             home: path.resolve(process.cwd(), appOption.home || ''),
             logPath: appOption.logPath || 'logs',
             proxy: appOption.proxy || false,
-            key: appOption.key || 'app'
+            key: appOption.key || 'app',
+            customResp: appOption.customResp || false
         };
         this.debugLog = debug(`server:${this.option.key}`);
         this.server = new Koa();
@@ -34,6 +36,7 @@ export default class App {
         this.server.keys = [this.option.key];
         this.moduleMgr = new ModuleManager();
         this.initMiddleWare();
+        App.logger = Logger.getLogger('info', this.option.home, this.option.logPath);
     }
 
     /**
@@ -43,7 +46,7 @@ export default class App {
         this.use(Logger.initRequestLog(this.option));
         this.use(Compress.initCompression(this.option));
         this.use(Cors.initCors(this.option));
-        this.use(JsonResponse.initJsonResp(this.option));
+        if (this.option.customResp) this.use(JsonResponse.initJsonResp(this.option));
         // 设置请求解析中间件
         this.use(bodyParserServ());
         if (process.env.NODE_ENV !== 'production') {
@@ -87,18 +90,22 @@ export default class App {
     }
 
     /**
-     * 获取 App 关联使用的 log
-     */
-    public getLogApp = () => {
-        return Logger.getLogger('info', this.option.home, this.option.logPath);
-    }
-
-    /**
      * 设置Koa2中间件
      * @param middleware
      */
     public use(middleware: Koa.Middleware) {
         return this.server.use(middleware);
+    }
+
+    /**
+     * 自定义设置返回参数格式：
+     * code = 0时，表示正常返回结果，data为接口返回值
+     * code = 其他时，表示内部错误，data为e错误信息值
+     * response函数返回的对象已被JOSN序列化
+     * @param response 返回结果函数
+     */
+    public useResponse(response: (code: number, data: any) => any) {
+        return this.server.use(JsonResponse.initJsonResp(this.option, this.option.customResp, response));
     }
 
     /**
