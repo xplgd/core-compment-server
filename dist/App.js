@@ -17,7 +17,7 @@ const bodyParserServ = require("koa-bodyparser");
 const ModuleManager_1 = require("./ModuleManager");
 class App {
     constructor(config) {
-        this.initMiddleWare = () => {
+        this.initMiddleWare = () => __awaiter(this, void 0, void 0, function* () {
             this.use(middleware_1.Logger.initRequestLog(this.option));
             this.use(middleware_1.Compress.initCompression(this.option));
             this.use(middleware_1.Cors.initCors(this.option));
@@ -27,7 +27,10 @@ class App {
             if (process.env.NODE_ENV !== 'production') {
                 this.use(log());
             }
-        };
+            for (const middleware of this.middlewareList) {
+                this.use(middleware);
+            }
+        });
         this.initModule = () => __awaiter(this, void 0, void 0, function* () {
             yield this.moduleMgr.initModule(this);
         });
@@ -44,16 +47,17 @@ class App {
             key: appOption.key || 'app',
             customResp: appOption.customResp || false
         };
-        this.debugLog = debug(`server:${this.option.key}`);
         this.server = new Koa();
         this.server.proxy = this.option.proxy;
         this.server.keys = [this.option.key];
+        this.middlewareList = [];
         this.moduleMgr = new ModuleManager_1.default();
-        this.initMiddleWare();
+        this.debugLog = debug(`server:${this.option.key}`);
         App.logger = middleware_1.Logger.getLogger('info', this.option.home, this.option.logPath);
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
+            yield this.initMiddleWare();
             yield this.initModule();
             this.server.listen(this.option.port);
             this.debugLog(`app initializd: Listening on port ${this.option.port}`);
@@ -68,8 +72,14 @@ class App {
     getKoaApp() {
         return this.server;
     }
-    use(middleware) {
-        return this.server.use(middleware);
+    use(middleware, innerLoop = false) {
+        if (innerLoop) {
+            this.middlewareList.push(middleware);
+        }
+        else {
+            this.server.use(middleware);
+        }
+        return this.server;
     }
     useResponse(response) {
         return this.server.use(middleware_1.JsonResponse.initJsonResp(this.option, this.option.customResp, response));

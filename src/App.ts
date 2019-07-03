@@ -10,10 +10,11 @@ import { IModelOption } from './storge/models/IModelOption';
 export default class App {
 
     private server: Koa;
-    private option: IAppOption;
-    private modelOptions: IModelOption[];
+    private option: IAppOption;                 // server应用配置参数
+    private modelOptions: IModelOption[];       // 数据配置参数
+    private middlewareList: Koa.Middleware[];   // 自定义中间件集合
+    private moduleMgr: ModuleManager;           // 模块管理器
     private debugLog: debug.IDebugger;
-    private moduleMgr: ModuleManager;
     public static logger: any;
 
     /**
@@ -30,19 +31,19 @@ export default class App {
             key: appOption.key || 'app',
             customResp: appOption.customResp || false
         };
-        this.debugLog = debug(`server:${this.option.key}`);
         this.server = new Koa();
         this.server.proxy = this.option.proxy;
         this.server.keys = [this.option.key];
+        this.middlewareList = [];
         this.moduleMgr = new ModuleManager();
-        this.initMiddleWare();
+        this.debugLog = debug(`server:${this.option.key}`);
         App.logger = Logger.getLogger('info', this.option.home, this.option.logPath);
     }
 
     /**
      * 初始化中间件
      */
-    private initMiddleWare = () => {
+    private initMiddleWare = async () => {
         this.use(Logger.initRequestLog(this.option));
         this.use(Compress.initCompression(this.option));
         this.use(Cors.initCors(this.option));
@@ -51,6 +52,10 @@ export default class App {
         this.use(bodyParserServ());
         if (process.env.NODE_ENV !== 'production') {
             this.use(log());
+        }
+        // 内环
+        for (const middleware of this.middlewareList) {
+            this.use(middleware);
         }
     }
 
@@ -65,6 +70,7 @@ export default class App {
      * 启动App
      */
     public async start(): Promise<void> {
+        await this.initMiddleWare();
         await this.initModule();
         this.server.listen(this.option.port);
         this.debugLog(`app initializd: Listening on port ${this.option.port}`);
@@ -92,15 +98,22 @@ export default class App {
     /**
      * 设置Koa2中间件
      * @param middleware
+     * @param innerLoop 洋葱圈内部环
      */
-    public use(middleware: Koa.Middleware) {
-        return this.server.use(middleware);
+    public use(middleware: Koa.Middleware, innerLoop: boolean = false) {
+        if (innerLoop) {
+            this.middlewareList.push(middleware);
+        } else {
+            this.server.use(middleware);
+        }
+
+        return this.server;
     }
 
     /**
-     * 自定义设置返回参数格式：
+     * 自定义设置返回参数格式(当config.appOption配置参数customResp为true时生效)：
      * code = 0时，表示正常返回结果，data为接口返回值
-     * code = 其他时，表示内部错误，data为e错误信息值
+     * code = 其他时，表示内部错误，data为err错误信息值
      * response函数返回的对象已被JOSN序列化
      * @param response 返回结果函数
      */
