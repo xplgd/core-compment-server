@@ -1,12 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const crypto = require("crypto");
 exports.requestIp = (ctx) => ctx.ips.length === 0 ? ctx.request.ip : ctx.ips[0];
-exports.md5 = (plain) => {
-    const md5Fn = crypto.createHash('md5');
-    md5Fn.update(plain);
-    return md5Fn.digest('hex');
-};
 exports.formatter = {
     toWebSafeBase64: (base64Str) => {
         base64Str = base64Str.replace(/\+/ig, '-');

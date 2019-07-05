@@ -1,4 +1,3 @@
-import * as crypto from 'crypto';
 import * as Router from 'koa-router';
 
 /**
@@ -7,17 +6,6 @@ import * as Router from 'koa-router';
  * @param  {Router.IRouterContext} ctx
  */
 export const requestIp = (ctx: Router.IRouterContext) => ctx.ips.length === 0 ? ctx.request.ip : ctx.ips[0];
-
-/**
- * 计算 md5
- * @param plain
- */
-export const md5 = (plain: string) => {
-    const md5Fn = crypto.createHash('md5');
-    md5Fn.update(plain);
-
-    return md5Fn.digest('hex');
-};
 
 export const formatter = {
     /**

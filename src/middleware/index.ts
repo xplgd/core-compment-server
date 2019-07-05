@@ -2,7 +2,6 @@ import * as Compress from './Compress';
 import * as Cors from './Cors';
 import * as Logger from './Logger';
 import * as JsonResponse from './JsonResponse';
-import * as CAToken from './CAToken';
 
 /**
  * App 配置参数的接口
@@ -52,7 +51,6 @@ export interface IAppOption {
 export {
     Cors,
     Logger,
-    CAToken,
     Compress,
     JsonResponse
 };

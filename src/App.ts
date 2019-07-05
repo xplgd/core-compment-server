@@ -32,12 +32,13 @@ export default class App {
         this.moduleMgr = new ModuleManager();
         this.debugLog = debug(`server:${this.appOption.key}`);
         App.logger = Logger.getLogger('info', this.appOption.home, this.appOption.logPath);
+        this.initServer();
     }
 
     /**
      * 初始化server
      */
-    private initServer = async () => {
+    private initServer = () => {
         this.server = new Koa();
         this.server.proxy = this.appOption.proxy;
         this.server.keys = [this.appOption.key];
@@ -73,7 +74,6 @@ export default class App {
      * 启动App
      */
     public async start(): Promise<void> {
-        await this.initServer();
         await this.initMiddleWare();
         await this.initModule();
         this.server.listen(this.appOption.port);

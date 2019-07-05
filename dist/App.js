@@ -17,11 +17,11 @@ const bodyParserServ = require("koa-bodyparser");
 const ModuleManager_1 = require("./ModuleManager");
 class App {
     constructor(config) {
-        this.initServer = () => __awaiter(this, void 0, void 0, function* () {
+        this.initServer = () => {
             this.server = new Koa();
             this.server.proxy = this.appOption.proxy;
             this.server.keys = [this.appOption.key];
-        });
+        };
         this.initMiddleWare = () => __awaiter(this, void 0, void 0, function* () {
             this.use(middleware_1.Logger.initRequestLog(this.appOption));
             this.use(middleware_1.Compress.initCompression(this.appOption));
@@ -52,10 +52,10 @@ class App {
         this.moduleMgr = new ModuleManager_1.default();
         this.debugLog = debug(`server:${this.appOption.key}`);
         App.logger = middleware_1.Logger.getLogger('info', this.appOption.home, this.appOption.logPath);
+        this.initServer();
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.initServer();
             yield this.initMiddleWare();
             yield this.initModule();
             this.server.listen(this.appOption.port);

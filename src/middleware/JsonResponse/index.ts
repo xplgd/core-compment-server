@@ -5,7 +5,7 @@ import * as util from '../../util';
 import { IAppOption } from '..';
 import { getLogger } from '../Logger';
 
-export interface IResponseOption {
+interface IResponseOption {
     disable?: boolean;
     response?: (code: number, data: any) => any;
 }
@@ -125,5 +125,6 @@ const jsonFormatter = (ctx: Router.IRouterContext, code: number, data: any, pret
 };
 
 export {
+    IResponseOption,
     initJsonResp
 };

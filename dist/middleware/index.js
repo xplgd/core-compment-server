@@ -8,5 +8,3 @@ const Logger = require("./Logger");
 exports.Logger = Logger;
 const JsonResponse = require("./JsonResponse");
 exports.JsonResponse = JsonResponse;
-const CAToken = require("./CAToken");
-exports.CAToken = CAToken;
