@@ -10,50 +10,53 @@ import { IModelOption } from './storge/models/IModelOption';
 export default class App {
 
     private server: Koa;
-    private option: IAppOption;                 // server应用配置参数
+    private appOption: IAppOption;              // server应用配置参数
     private modelOptions: IModelOption[];       // 数据配置参数
     private middlewareList: Koa.Middleware[];   // 自定义中间件集合
     private moduleMgr: ModuleManager;           // 模块管理器
-    private debugLog: debug.IDebugger;
-    public static logger: any;
+    private debugLog: debug.IDebugger;          // debug输出日志
+    public static logger: any;                  // 全局记录日志
 
     /**
      * 构建一个 App 实例
      */
     public constructor(config: any) {
-        const appOption = config.appOption;
         this.modelOptions = config.modelOptions;
-        this.option = {
-            port: appOption.port || 6789,
-            home: path.resolve(process.cwd(), appOption.home || ''),
-            logPath: appOption.logPath || 'logs',
-            proxy: appOption.proxy || false,
-            key: appOption.key || 'app',
-            customResp: appOption.customResp || false
-        };
-        this.server = new Koa();
-        this.server.proxy = this.option.proxy;
-        this.server.keys = [this.option.key];
+        this.appOption = config.appOption;
+        this.appOption.port = config.appOption.port || 6789;
+        this.appOption.home = path.resolve(process.cwd(), config.appOption.home || '');
+        this.appOption.logPath = config.appOption.logPath || 'logs';
+        this.appOption.proxy = config.appOption.proxy || false;
+        this.appOption.key = config.appOption.key || 'app';
         this.middlewareList = [];
         this.moduleMgr = new ModuleManager();
-        this.debugLog = debug(`server:${this.option.key}`);
-        App.logger = Logger.getLogger('info', this.option.home, this.option.logPath);
+        this.debugLog = debug(`server:${this.appOption.key}`);
+        App.logger = Logger.getLogger('info', this.appOption.home, this.appOption.logPath);
+    }
+
+    /**
+     * 初始化server
+     */
+    private initServer = async () => {
+        this.server = new Koa();
+        this.server.proxy = this.appOption.proxy;
+        this.server.keys = [this.appOption.key];
     }
 
     /**
      * 初始化中间件
      */
     private initMiddleWare = async () => {
-        this.use(Logger.initRequestLog(this.option));
-        this.use(Compress.initCompression(this.option));
-        this.use(Cors.initCors(this.option));
-        if (this.option.customResp) this.use(JsonResponse.initJsonResp(this.option));
+        this.use(Logger.initRequestLog(this.appOption));
+        this.use(Compress.initCompression(this.appOption));
+        this.use(Cors.initCors(this.appOption));
+        this.use(JsonResponse.initJsonResp(this.appOption));
         // 设置请求解析中间件
         this.use(bodyParserServ());
         if (process.env.NODE_ENV !== 'production') {
             this.use(log());
         }
-        // 内环
+        // 内环中间件
         for (const middleware of this.middlewareList) {
             this.use(middleware);
         }
@@ -70,18 +73,19 @@ export default class App {
      * 启动App
      */
     public async start(): Promise<void> {
+        await this.initServer();
         await this.initMiddleWare();
         await this.initModule();
-        this.server.listen(this.option.port);
-        this.debugLog(`app initializd: Listening on port ${this.option.port}`);
+        this.server.listen(this.appOption.port);
+        this.debugLog(`app initializd: Listening on port ${this.appOption.port}`);
     }
 
     /* -------------------------------扩展方法-------------------------------- */
     /**
      * 获取 App 使用的配置参数
      */
-    public getOption(): IAppOption {
-        return this.option;
+    public getAppOption(): IAppOption {
+        return this.appOption;
     }
 
     public getModelOptions() {
@@ -108,17 +112,6 @@ export default class App {
         }
 
         return this.server;
-    }
-
-    /**
-     * 自定义设置返回参数格式(当config.appOption配置参数customResp为true时生效)：
-     * code = 0时，表示正常返回结果，data为接口返回值
-     * code = 其他时，表示内部错误，data为err错误信息值
-     * response函数返回的对象已被JOSN序列化
-     * @param response 返回结果函数
-     */
-    public useResponse(response: (code: number, data: any) => any) {
-        return this.server.use(JsonResponse.initJsonResp(this.option, this.option.customResp, response));
     }
 
     /**

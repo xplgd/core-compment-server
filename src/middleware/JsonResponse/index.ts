@@ -5,10 +5,18 @@ import * as util from '../../util';
 import { IAppOption } from '..';
 import { getLogger } from '../Logger';
 
-const initJsonResp = (option: IAppOption, custom: boolean = false, myResopnse?: (code: number, data: any) => any) => {
+export interface IResponseOption {
+    disable?: boolean;
+    response?: (code: number, data: any) => any;
+}
+
+const initJsonResp = (option: IAppOption) => {
     const errorLogger = getLogger('error', option.home, option.logPath);
+    const responseOption = null === option.response || undefined === option.response ? {} : option.response;
 
     return async (ctx: Router.IRouterContext, next: () => Promise<any>) => {
+        if (responseOption.disable) await next();
+
         let statusCode: number = 0;
         let userData: any = null;
 
@@ -47,7 +55,7 @@ const initJsonResp = (option: IAppOption, custom: boolean = false, myResopnse?: 
                 return;
             }
 
-            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode, custom, myResopnse);
+            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode, responseOption);
         } catch (err) {
             ctx.status = typeof err.status === 'number' ? err.status : 500;
             // application
@@ -83,13 +91,12 @@ const initJsonResp = (option: IAppOption, custom: boolean = false, myResopnse?: 
 
             // Reset response status
             ctx.status = 200;
-            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode, custom, myResopnse);
+            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode, responseOption);
         }
     };
 };
 
-const jsonFormatter = (ctx: Router.IRouterContext, code: number, data: any, prettify: boolean, spaces: number, suppressResponseCode: boolean = false,
-                       custom: boolean = false, myResopnse?: (code: number, data: any) => any) => {
+const jsonFormatter = (ctx: Router.IRouterContext, code: number, data: any, prettify: boolean, spaces: number, suppressResponseCode: boolean = false, responseOption: IResponseOption) => {
     // set response type
     ctx.type = 'application/json';
     // 记录处理结束时间
@@ -98,8 +105,8 @@ const jsonFormatter = (ctx: Router.IRouterContext, code: number, data: any, pret
     let wrappedBody = suppressResponseCode ? data : {};
 
     if (!suppressResponseCode) {
-        if (custom && myResopnse) {
-            wrappedBody = myResopnse(code, data);
+        if (responseOption.response) {
+            wrappedBody = responseOption.response(code, data);
         } else {
             wrappedBody.code = code;
             wrappedBody.data = data;

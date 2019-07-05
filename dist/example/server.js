@@ -11,16 +11,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const __1 = require("../");
 const config_1 = require("./config");
 const demo_1 = require("./demo");
+const myResponse = (code, data) => {
+    if (code === 0) {
+        return { result: true, msg: 'success', data };
+    }
+    else {
+        return { result: false, msg: data.message, data };
+    }
+};
 const start = () => __awaiter(this, void 0, void 0, function* () {
+    config_1.default.appOption.response = { response: myResponse };
     const app = new __1.App(config_1.default);
-    app.useResponse((code, data) => {
-        if (code === 0) {
-            return { result: true, msg: 'success', data };
-        }
-        else {
-            return { result: false, msg: data.message, data };
-        }
-    });
     yield app.loadModule(demo_1.default);
     app.start();
 });

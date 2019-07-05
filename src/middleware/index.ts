@@ -44,10 +44,9 @@ export interface IAppOption {
      */
     cors?: Cors.ICrosOption;
     /**
-     * 是否自定义返回结果结构,
-     * 若需要，使用app.useResponse定义返回结构
+     * jsonResponse 的参数
      */
-    customResp?: boolean;
+    response?: JsonResponse.IResponseOption;
 }
 
 export {

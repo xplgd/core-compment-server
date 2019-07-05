@@ -12,9 +12,12 @@ const isJSON = require("koa-is-json");
 const stringify = require("streaming-json-stringify");
 const util = require("../../util");
 const Logger_1 = require("../Logger");
-const initJsonResp = (option, custom = false, myResopnse) => {
+const initJsonResp = (option) => {
     const errorLogger = Logger_1.getLogger('error', option.home, option.logPath);
+    const responseOption = null === option.response || undefined === option.response ? {} : option.response;
     return (ctx, next) => __awaiter(this, void 0, void 0, function* () {
+        if (responseOption.disable)
+            yield next();
         let statusCode = 0;
         let userData = null;
         const spaces = 2;
@@ -40,7 +43,7 @@ const initJsonResp = (option, custom = false, myResopnse) => {
                 ctx.body = userData.pipe(sfy);
                 return;
             }
-            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode, custom, myResopnse);
+            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode, responseOption);
         }
         catch (err) {
             ctx.status = typeof err.status === 'number' ? err.status : 500;
@@ -68,18 +71,18 @@ const initJsonResp = (option, custom = false, myResopnse) => {
                 }
             }
             ctx.status = 200;
-            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode, custom, myResopnse);
+            jsonFormatter(ctx, statusCode, userData, prettify, spaces, suppressResponseCode, responseOption);
         }
     });
 };
 exports.initJsonResp = initJsonResp;
-const jsonFormatter = (ctx, code, data, prettify, spaces, suppressResponseCode = false, custom = false, myResopnse) => {
+const jsonFormatter = (ctx, code, data, prettify, spaces, suppressResponseCode = false, responseOption) => {
     ctx.type = 'application/json';
     ctx.state.end = new Date();
     let wrappedBody = suppressResponseCode ? data : {};
     if (!suppressResponseCode) {
-        if (custom && myResopnse) {
-            wrappedBody = myResopnse(code, data);
+        if (responseOption.response) {
+            wrappedBody = responseOption.response(code, data);
         }
         else {
             wrappedBody.code = code;

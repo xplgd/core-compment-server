@@ -17,12 +17,16 @@ const bodyParserServ = require("koa-bodyparser");
 const ModuleManager_1 = require("./ModuleManager");
 class App {
     constructor(config) {
+        this.initServer = () => __awaiter(this, void 0, void 0, function* () {
+            this.server = new Koa();
+            this.server.proxy = this.appOption.proxy;
+            this.server.keys = [this.appOption.key];
+        });
         this.initMiddleWare = () => __awaiter(this, void 0, void 0, function* () {
-            this.use(middleware_1.Logger.initRequestLog(this.option));
-            this.use(middleware_1.Compress.initCompression(this.option));
-            this.use(middleware_1.Cors.initCors(this.option));
-            if (this.option.customResp)
-                this.use(middleware_1.JsonResponse.initJsonResp(this.option));
+            this.use(middleware_1.Logger.initRequestLog(this.appOption));
+            this.use(middleware_1.Compress.initCompression(this.appOption));
+            this.use(middleware_1.Cors.initCors(this.appOption));
+            this.use(middleware_1.JsonResponse.initJsonResp(this.appOption));
             this.use(bodyParserServ());
             if (process.env.NODE_ENV !== 'production') {
                 this.use(log());
@@ -37,34 +41,29 @@ class App {
         this.loadModule = (module) => {
             this.moduleMgr.loadModule(module);
         };
-        const appOption = config.appOption;
         this.modelOptions = config.modelOptions;
-        this.option = {
-            port: appOption.port || 6789,
-            home: path.resolve(process.cwd(), appOption.home || ''),
-            logPath: appOption.logPath || 'logs',
-            proxy: appOption.proxy || false,
-            key: appOption.key || 'app',
-            customResp: appOption.customResp || false
-        };
-        this.server = new Koa();
-        this.server.proxy = this.option.proxy;
-        this.server.keys = [this.option.key];
+        this.appOption = config.appOption;
+        this.appOption.port = config.appOption.port || 6789;
+        this.appOption.home = path.resolve(process.cwd(), config.appOption.home || '');
+        this.appOption.logPath = config.appOption.logPath || 'logs';
+        this.appOption.proxy = config.appOption.proxy || false;
+        this.appOption.key = config.appOption.key || 'app';
         this.middlewareList = [];
         this.moduleMgr = new ModuleManager_1.default();
-        this.debugLog = debug(`server:${this.option.key}`);
-        App.logger = middleware_1.Logger.getLogger('info', this.option.home, this.option.logPath);
+        this.debugLog = debug(`server:${this.appOption.key}`);
+        App.logger = middleware_1.Logger.getLogger('info', this.appOption.home, this.appOption.logPath);
     }
     start() {
         return __awaiter(this, void 0, void 0, function* () {
+            yield this.initServer();
             yield this.initMiddleWare();
             yield this.initModule();
-            this.server.listen(this.option.port);
-            this.debugLog(`app initializd: Listening on port ${this.option.port}`);
+            this.server.listen(this.appOption.port);
+            this.debugLog(`app initializd: Listening on port ${this.appOption.port}`);
         });
     }
-    getOption() {
-        return this.option;
+    getAppOption() {
+        return this.appOption;
     }
     getModelOptions() {
         return this.modelOptions;
@@ -80,9 +79,6 @@ class App {
             this.server.use(middleware);
         }
         return this.server;
-    }
-    useResponse(response) {
-        return this.server.use(middleware_1.JsonResponse.initJsonResp(this.option, this.option.customResp, response));
     }
 }
 exports.default = App;

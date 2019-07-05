@@ -6,8 +6,7 @@ const config = {
         home: '',
         logPath: 'logs',
         proxy: false,
-        key: 'app',
-        customResp: true
+        key: 'app'
     },
     modelOptions: [
         {
